@@ -16,6 +16,7 @@ class Regressor(object):
 
         if modelFile is not None:
             dump(m, modelFile)
+        return m
 
     def _load_model(self, modelFile):
         return load(modelFile)
