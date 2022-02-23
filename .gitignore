@@ -7,7 +7,7 @@ ompiled source #
 *.o
 *.so
 *.pyc
-*checkpoint.*
+#*checkpoint.*
 
 # Packages #
 ############
