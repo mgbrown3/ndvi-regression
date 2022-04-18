@@ -24,7 +24,7 @@ configs.patch_size = (2, 2)
 configs.img_size = (52, 75)
 
 # data related 
-configs.input_dim = 1
+configs.input_dim = 2
 configs.output_dim = 1
 
 configs.input_length = 6

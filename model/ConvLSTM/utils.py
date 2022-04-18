@@ -11,6 +11,11 @@ def load_ndvi(full_data_path, sidx, eidx):
     data = np.array([np.load(f) for f in sorted(files)[sidx:eidx]])
     return data
 
+def load_precip(full_data_path, sidx, eidx):
+    files = glob.glob(os.path.join(full_data_path, "precip_????_???_*.npy"))
+    data = np.array([np.load(f) for f in sorted(files)[sidx:eidx]])
+    return data
+
 def prepare_inputs_targets(len_time, input_gap, input_length, pred_shift, pred_length, samples_gap):
     """
     Args:
@@ -94,21 +99,34 @@ class ndviDataset(Dataset):
         """
         super().__init__()
         
+        #load ndvi
         data = load_ndvi(full_data_path, start_time_idx, end_time_idx)
         masks = np.where(data > -1999, 1, 0).astype(np.float32)
+
+        # load precip 
+        data2 = load_precip(full_data_path, start_time_idx, end_time_idx)
 
         #TBD
         #try out other feature scaling 
         data = np.where(data > -1999, data, 0)*1e-4
+    
         ##TBD
+        #scaling precip??
 
         idx_inputs, idx_targets = prepare_inputs_targets(data.shape[0],
                      input_gap=input_gap, input_length=input_length,
                      pred_shift=pred_shift, pred_length=pred_length, 
                      samples_gap=samples_gap)
-                     
+        
+
+
         self.train_masks = masks[idx_targets][:, :, None]
-        self.inputs = data[idx_inputs][:, :, None]
+        
+        #self.inputs = data[idx_inputs][:, :, None]
+        ndvi = data[idx_inputs][:, :, None]
+        pr = data[idx_inputs][:, :, None]
+        self.inputs = np.concatenate((ndvi, pr), axis=2)
+
         self.targets = data[idx_targets][:, :, None]
 
 
